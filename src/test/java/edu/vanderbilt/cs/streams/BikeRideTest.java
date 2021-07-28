@@ -64,6 +64,7 @@ public class BikeRideTest {
     @Test
     public void testFusedDataFrameStream(){
         BikeRide ride = loadSampleRide();
+
         assertEquals(EXPECTED_DATA_ITEMS, ride.fusedFramesStream().count());
 
         assertEquals(EXPECTED_AVG_ALTITUDE,

@@ -74,9 +74,21 @@ public class StreamUtilsTest {
     @Test
     public void testAverageOfProperty(){
         List<String> data = Arrays.asList("a","ab","abc","abcd","abcde");
-        assertEquals(3, StreamUtils.averageOfProperty(String::length).apply(data));
 
-        List<UUID> data2 = IntStream.range(0, 10).mapToObj(i -> UUID.randomUUID()).collect(Collectors.toList());
-        assertEquals(36.0, StreamUtils.averageOfProperty((UUID v) -> v.toString().length()).apply(data2));
+        StreamUtils
+                .averageOfProperty(String::length).apply(data);
+
+        assertEquals(3, StreamUtils
+                .averageOfProperty(String::length).apply(data));
+
+        List<UUID> data2 = IntStream.range(0, 10)
+                .mapToObj(i -> UUID.randomUUID()).collect(Collectors.toList());
+
+
+        StreamUtils
+                .averageOfProperty((UUID v) -> v.toString().length()).apply(data2);
+
+        assertEquals(36.0, StreamUtils
+                .averageOfProperty((UUID v) -> v.toString().length()).apply(data2));
     }
 }

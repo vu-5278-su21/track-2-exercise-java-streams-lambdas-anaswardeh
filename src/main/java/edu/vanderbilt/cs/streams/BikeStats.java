@@ -1,14 +1,7 @@
 package edu.vanderbilt.cs.streams;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.OptionalDouble;
-import java.util.function.Function;
-import java.util.function.ToDoubleFunction;
 import java.util.stream.Collectors;
-import java.util.stream.DoubleStream;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import edu.vanderbilt.cs.streams.BikeRide.LatLng;
@@ -20,6 +13,7 @@ public class BikeStats {
     public BikeStats(BikeRide ride) {
         this.ride = ride;
     }
+
 
     /**
      * @ToDo:
@@ -42,7 +36,26 @@ public class BikeStats {
      * @return
      */
     public Stream<BikeRide.DataFrame> averagedDataFrameStream(int windowSize){
-        return Stream.empty();
+
+        Stream<BikeRide.DataFrame> df = this.ride.fusedFramesStream();
+        List<BikeRide.DataFrame> data = df.collect(Collectors.toList());
+        Stream<List<BikeRide.DataFrame>> sublists = StreamUtils.slidingWindow(data, windowSize);
+
+//        Each sliding window would be a list of n DataFrame objects.
+        List slidingWindows = sublists.collect(Collectors.toList());
+
+//        You would produce a new DataFrame for each window by averaging the grade, altitude, velocity, and heart rate
+//        for the 3 DataFrame objects.
+
+
+
+        slidingWindows.forEach(window -> StreamUtils.averageOfProperty(BikeRide.DataFrame::getVelocity).apply((List<BikeRide.DataFrame>) window));
+
+        Double doubles = StreamUtils.averageOfProperty(BikeRide.DataFrame::getAltitude).apply(slidingWindows);
+
+
+
+        return df;
     }
 
     // @ToDo:
