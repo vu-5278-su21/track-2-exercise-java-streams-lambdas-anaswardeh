@@ -23,15 +23,15 @@ public class BikeStatsTest {
 
         // Consistency checks
         double velocityAverage = stats.averagedDataFrameStream(1)
-                                    .mapToDouble(BikeRide.DataFrame::getVelocity)
-                                    .average()
-                                    .getAsDouble();
+                .mapToDouble(BikeRide.DataFrame::getVelocity)
+                .average()
+                .getAsDouble();
         double expectedVelocityAverage = ride.velocityStream().average().getAsDouble();
         assertEquals(expectedVelocityAverage, velocityAverage, 0.1);
 
         // The coordinate should be set by the first item in the window
         assertEquals(ride.coordinateStream().findFirst().get(),
-                     stats.averagedDataFrameStream(10).findFirst().get().coordinate);
+                stats.averagedDataFrameStream(10).findFirst().get().coordinate);
         assertEquals(ride.coordinateStream().skip(1).findFirst().get(),
                 stats.averagedDataFrameStream(10).skip(1).findFirst().get().coordinate);
 
@@ -65,19 +65,19 @@ public class BikeStatsTest {
         // equals the average for the corresponding data frame times the
         // number of items in the window
         IntStream.range(0, (int) ride.velocityStream().count() - windowSize)
-                    .forEach( i -> {
-                        assertEquals(
-                                ride.velocityStream()
-                                        .skip(i)
-                                        .limit(windowSize)
-                                        .sum(),
-                                stats.averagedDataFrameStream(windowSize)
-                                        .skip(i)
-                                        .limit(1)
-                                        .mapToDouble(f -> f.getVelocity() * windowSize)
-                                        .sum(),
-                                0.01);
-                    });
+                .forEach( i -> {
+                    assertEquals(
+                            ride.velocityStream()
+                                    .skip(i)
+                                    .limit(windowSize)
+                                    .sum(),
+                            stats.averagedDataFrameStream(windowSize)
+                                    .skip(i)
+                                    .limit(1)
+                                    .mapToDouble(f -> f.getVelocity() * windowSize)
+                                    .sum(),
+                            0.01);
+                });
 
         // Consistency checks
         double altAverage = stats.averagedDataFrameStream(1)

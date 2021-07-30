@@ -2,9 +2,8 @@ package edu.vanderbilt.cs.streams;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -125,7 +124,8 @@ public class BikeRide {
     // Hint: see Arrays.stream(...)
     //
     public DoubleStream heartRateStream() {
-        return DoubleStream.empty();
+        DoubleStream stream = Arrays.stream(this.heartRate);
+        return stream;
     }
 
     // @ToDo:
@@ -134,7 +134,8 @@ public class BikeRide {
     // stream of the specified values
     //
     public DoubleStream velocityStream() {
-        return DoubleStream.empty();
+        DoubleStream stream = Arrays.stream(this.velocity);
+        return stream;
     }
 
     // @ToDo:
@@ -142,7 +143,8 @@ public class BikeRide {
     // Implement this method so it returns a
     // stream of the specified values
     public DoubleStream gradeStream() {
-        return DoubleStream.empty();
+        DoubleStream stream = Arrays.stream(this.grade);
+        return stream;
     }
 
     // @ToDo:
@@ -150,7 +152,8 @@ public class BikeRide {
     // Implement this method so it returns a
     // stream of the specified values
     public DoubleStream altitudeStream() {
-        return DoubleStream.empty();
+        DoubleStream stream = Arrays.stream(this.altitude);
+        return stream;
     }
 
     // @ToDo:
@@ -158,7 +161,8 @@ public class BikeRide {
     // Implement this method so it returns a
     // stream of the specified values
     public Stream<LatLng> coordinateStream() {
-        return Stream.empty();
+        Stream<LatLng> stream = Arrays.stream(this.coordinates);
+        return stream;
     }
 
 
@@ -171,9 +175,13 @@ public class BikeRide {
     // data arrays (e.g., heartRate, velocity, etc.)
     //
     public Stream<DataFrame> fusedFramesStream() {
-        return Stream.empty();
-    }
 
+        Stream<DataFrame> stream = IntStream
+                .range(0, this.coordinates.length)
+                .mapToObj(i -> new DataFrame(this.coordinates[i], this.grade[i], this.altitude[i], this.velocity[i], this.heartRate[i]));
+
+        return stream;
+    }
 
     // Don't change me!
     //
