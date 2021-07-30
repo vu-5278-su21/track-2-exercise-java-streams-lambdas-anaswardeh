@@ -22,8 +22,9 @@ public class StreamUtils {
     public static <T> Function<List<T>, Double> averageOfProperty(ToDoubleFunction<T> f){
         return (List<T> window) -> {
              OptionalDouble stream = window.stream()
-                    .mapToDouble(d -> d.toString().length())
-                    .average();
+                     .mapToDouble(d -> f.applyAsDouble(d))
+                     .average();
+
             return stream.getAsDouble();
         };
     }

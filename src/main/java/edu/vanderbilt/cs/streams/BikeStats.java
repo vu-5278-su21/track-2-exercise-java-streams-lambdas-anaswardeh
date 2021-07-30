@@ -1,10 +1,10 @@
 package edu.vanderbilt.cs.streams;
 
-import java.util.List;
+import edu.vanderbilt.cs.streams.BikeRide.LatLng;
+
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import edu.vanderbilt.cs.streams.BikeRide.LatLng;
 
 public class BikeStats {
 
@@ -35,27 +35,20 @@ public class BikeStats {
      * @param windowSize
      * @return
      */
+
     public Stream<BikeRide.DataFrame> averagedDataFrameStream(int windowSize){
 
-        Stream<BikeRide.DataFrame> df = this.ride.fusedFramesStream();
-        List<BikeRide.DataFrame> data = df.collect(Collectors.toList());
-        Stream<List<BikeRide.DataFrame>> sublists = StreamUtils.slidingWindow(data, windowSize);
+        List<BikeRide.DataFrame> dfs = this.ride.fusedFramesStream().collect(Collectors.toList());
 
-//        Each sliding window would be a list of n DataFrame objects.
-        List slidingWindows = sublists.collect(Collectors.toList());
+        return StreamUtils.slidingWindow(dfs, windowSize).map(df -> new BikeRide.DataFrame(getMyCoord(df.get(0)),
+                StreamUtils.averageOfProperty(BikeRide.DataFrame::getGrade).apply(df),
+                StreamUtils.averageOfProperty(BikeRide.DataFrame::getAltitude).apply(df),
+                StreamUtils.averageOfProperty(BikeRide.DataFrame::getVelocity).apply(df),
+                StreamUtils.averageOfProperty(BikeRide.DataFrame::getHeartRate).apply(df)));
+    }
 
-//        You would produce a new DataFrame for each window by averaging the grade, altitude, velocity, and heart rate
-//        for the 3 DataFrame objects.
-
-
-
-        slidingWindows.forEach(window -> StreamUtils.averageOfProperty(BikeRide.DataFrame::getVelocity).apply((List<BikeRide.DataFrame>) window));
-
-        Double doubles = StreamUtils.averageOfProperty(BikeRide.DataFrame::getAltitude).apply(slidingWindows);
-
-
-
-        return df;
+    public static LatLng getMyCoord(BikeRide.DataFrame df){
+        return df.coordinate;
     }
 
     // @ToDo:
@@ -70,7 +63,9 @@ public class BikeStats {
     // the same.
     //
     public Stream<LatLng> locationsOfStops() {
-        return Stream.empty();
+        Stream<LatLng>  coords = this.ride.fusedFramesStream()
+                .filter(v -> v.velocity == 0).map(dataFrame -> dataFrame.coordinate);
+        return coords;
     }
 
 }
